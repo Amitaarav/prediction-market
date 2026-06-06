@@ -5,12 +5,13 @@ import type { JwtPayload } from "@supabase/supabase-js";
 export function useUser() {
       const [claims, setClaims] = useState<JwtPayload | null>(null);
       const supabase = useSupabase();
+
       useEffect(() => {
         supabase.auth.getClaims().then(({data}) => {
           setClaims(data?.claims ?? null);
         }) 
     
-        const { data : {subscription},} =  supabase.auth.onAuthStateChange(() => {
+        const { data : {subscription}} =  supabase.auth.onAuthStateChange(() => {
           supabase.auth.getClaims().then(({data}) => {
             setClaims(data?.claims ?? null)
           })
@@ -18,6 +19,8 @@ export function useUser() {
     
         return () => subscription.unsubscribe();
       }, []);
+
+      console.log("claims: ",claims);
 
       return claims;
 }
